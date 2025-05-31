@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import {
   FileText,
-  Search,
   Download,
   FileBarChart2,
   Filter,
@@ -79,24 +78,36 @@ export function DocumentList({ documents }: DocumentListProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Função para baixar o PDF via fetch
-  const handleDownload = async (url: string, filename: string = 'document.pdf') => {
+  // Função para baixar o PDF: chama diretamente o NestJS em localhost:3001
+  const handleDownload = async (number: string) => {
+    // monta a URL completa do Nest
+    const url = `http://localhost:3001/documento/download/${number}.pdf`;
+
+    console.log('⏬ Tentando baixar PDF de:', url);
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: 'GET',
+        // Se seu Nest requer autenticação ou headers especiais, adicione aqui.
+      });
+
+      console.log('📥 Status da resposta:', response.status);
       if (!response.ok) {
-        throw new Error('Erro ao buscar o PDF');
+        throw new Error(`Erro ao buscar o PDF (status ${response.status})`);
       }
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
+
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = filename;
+      link.download = `${number}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      console.error("Erro ao baixar o arquivo:", error);
+      console.error('❌ Erro ao baixar o arquivo:', error);
+      alert('Não foi possível baixar o PDF. Verifique no console do navegador.');
     }
   };
 
@@ -195,7 +206,11 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <p className="text-muted-foreground mb-4">{doc.description}</p>
                 <Button
                   variant="outline"
+<<<<<<< HEAD
                   onClick={() => handleDownload(`http://localhost:3000/pdfs/${doc.number}.pdf`, `${doc.number}.pdf`)}
+=======
+                  onClick={() => handleDownload(doc.number)}
+>>>>>>> 9a362c7 (Atualiza a lógica de download de PDFs e ajusta a URL do backend para localhost:3001. Remove PDF desnecessário e adiciona nova rota para download via API.)
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
                   <Download className="h-4 w-4 text-blue-500 group-hover:text-blue-600" />
