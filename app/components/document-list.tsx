@@ -87,7 +87,6 @@ export function DocumentList({ documents }: DocumentListProps) {
     try {
       const response = await fetch(url, {
         method: 'GET',
-        // Se seu Nest requer autenticação ou headers especiais, adicione aqui.
       });
 
       console.log('📥 Status da resposta:', response.status);
@@ -206,11 +205,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <p className="text-muted-foreground mb-4">{doc.description}</p>
                 <Button
                   variant="outline"
-<<<<<<< HEAD
-                  onClick={() => handleDownload(`http://localhost:3000/pdfs/${doc.number}.pdf`, `${doc.number}.pdf`)}
-=======
-                  onClick={() => handleDownload(doc.number)}
->>>>>>> 9a362c7 (Atualiza a lógica de download de PDFs e ajusta a URL do backend para localhost:3001. Remove PDF desnecessário e adiciona nova rota para download via API.)
+                  onClick={() => handleDownload('teste')}
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
                   <Download className="h-4 w-4 text-blue-500 group-hover:text-blue-600" />
