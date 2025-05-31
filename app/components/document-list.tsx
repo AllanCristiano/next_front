@@ -81,7 +81,7 @@ export function DocumentList({ documents }: DocumentListProps) {
   // Função para baixar o PDF: chama diretamente o NestJS em localhost:3001
   const handleDownload = async (number: string) => {
     // monta a URL completa do Nest
-    const url = `http://localhost:3001/documento/download/${number}.pdf`;
+    const url = `http://192.168.100.5:3001/documento/download/${number}.pdf`;
 
     console.log('⏬ Tentando baixar PDF de:', url);
     try {
@@ -205,7 +205,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <p className="text-muted-foreground mb-4">{doc.description}</p>
                 <Button
                   variant="outline"
-                  onClick={() => handleDownload(doc.number)}
+                  onClick={() => handleDownload('teste')}
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
                   <Download className="h-4 w-4 text-blue-500 group-hover:text-blue-600" />
