@@ -205,7 +205,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <p className="text-muted-foreground mb-4">{doc.description}</p>
                 <Button
                   variant="outline"
-                  onClick={() => handleDownload('teste')}
+                  onClick={() => handleDownload(doc.number.split('/').join('')+'-'+doc.date)}
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
                   <Download className="h-4 w-4 text-blue-500 group-hover:text-blue-600" />
