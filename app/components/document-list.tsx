@@ -216,7 +216,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                     handleDownload(
                       (doc.number.split("/").join("")).split(".").join("") +
                         "-" +
-                        doc.date
+                        doc.date + '.pdf'
                     )
                   }
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
