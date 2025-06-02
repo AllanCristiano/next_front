@@ -82,7 +82,7 @@ export function DocumentList({ documents }: DocumentListProps) {
 
   // Função para baixar o PDF usando o endpoint interno
   const handleDownload = (filename: string) => {
-  window.open(`http://localhost:3001/documento/download/${filename}.pdf`, "_blank");
+  window.open(`https://api.aracaju.se.gov.br/documento/download/${filename}.pdf`);
   };
 
   return (
