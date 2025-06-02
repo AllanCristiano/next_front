@@ -9,7 +9,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Filename inválido.' }, { status: 400 });
   }
 
-  // Use HTTP, pois o backend responde corretamente via HTTP na porta 3001.
   const BACKEND_URL = "http://localhost:3001";
   const url = `${BACKEND_URL}/documento/download/${filename}.pdf`;
 
@@ -19,18 +18,17 @@ export async function GET(request: Request) {
       const errorText = await response.text();
       console.error("Falha na requisição para o backend:", errorText);
       return NextResponse.json(
-        { error: 'Erro ao buscar o PDF no backend.' },
+        { error: 'Erro ao buscar o PDF no backend.', details: errorText },
         { status: response.status }
       );
     }
 
     const arrayBuffer = await response.arrayBuffer();
-
     return new NextResponse(arrayBuffer, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${filename}.pdf"`,
+        "Content-Disposition": `attachment; filename="${filename}.pdf"`
       },
     });
   } catch (error: any) {
