@@ -1,37 +1,38 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Document, DocumentType, DateRange } from '../types';
+import { useState } from "react";
+import { Document, DocumentType, DateRange } from "../types";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   FileText,
   Download,
   FileBarChart2,
   Filter,
   Files,
-} from 'lucide-react';
-import { DocumentFilters } from './document-filters';
-import { Pagination } from './pagination';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { DocumentFilters } from "./document-filters";
+import { Pagination } from "./pagination";
+import { Button } from "@/components/ui/button";
 
 interface DocumentListProps {
   documents: Document[];
 }
 
 export function DocumentList({ documents }: DocumentListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState<DocumentType | 'ALL'>('ALL');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState<DocumentType | "ALL">("ALL");
   const [dateRange, setDateRange] = useState<DateRange>({
     from: undefined,
     to: undefined,
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const itemsPerPage = 5;
 
   const filteredDocuments = documents.filter((doc) => {
@@ -40,7 +41,7 @@ export function DocumentList({ documents }: DocumentListProps) {
       doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doc.number.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesType = selectedType === 'ALL' || doc.type === selectedType;
+    const matchesType = selectedType === "ALL" || doc.type === selectedType;
 
     const docDate = new Date(doc.date);
     const matchesDateRange =
@@ -54,20 +55,17 @@ export function DocumentList({ documents }: DocumentListProps) {
     total: documents.length,
     filtered: filteredDocuments.length,
     byType: {
-      ORDINANCE: documents.filter((doc) => doc.type === 'PORTARIA').length,
-      ORDINARY_LAW: documents.filter((doc) => doc.type === 'LEI_ORDINARIA').length,
-      COMPLEMENTARY_LAW: documents.filter((doc) => doc.type === 'LEI_COMPLEMENTAR').length,
-      DECREE: documents.filter((doc) => doc.type === 'DECRETO').length,
+      ORDINANCE: documents.filter((doc) => doc.type === "PORTARIA").length,
+      ORDINARY_LAW: documents.filter((doc) => doc.type === "LEI_ORDINARIA").length,
+      COMPLEMENTARY_LAW: documents.filter((doc) => doc.type === "LEI_COMPLEMENTAR").length,
+      DECREE: documents.filter((doc) => doc.type === "DECRETO").length,
     },
   };
 
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
-  const paginatedDocuments = filteredDocuments.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedDocuments = filteredDocuments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const handleFilterChange = (type: DocumentType | 'ALL', newDateRange: DateRange) => {
+  const handleFilterChange = (type: DocumentType | "ALL", newDateRange: DateRange) => {
     setSelectedType(type);
     setDateRange(newDateRange);
     setCurrentPage(1);
@@ -75,7 +73,7 @@ export function DocumentList({ documents }: DocumentListProps) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Função para baixar o PDF: chama diretamente o NestJS em localhost:3001
@@ -83,13 +81,10 @@ export function DocumentList({ documents }: DocumentListProps) {
     // monta a URL completa do Nest
     const url = `http://192.168.100.5:3001/documento/download/${number}.pdf`;
 
-    console.log('⏬ Tentando baixar PDF de:', url);
+    console.log("⏬ Tentando baixar PDF de:", url);
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-      });
-
-      console.log('📥 Status da resposta:', response.status);
+      const response = await fetch(url, { method: "GET" });
+      console.log("📥 Status da resposta:", response.status);
       if (!response.ok) {
         throw new Error(`Erro ao buscar o PDF (status ${response.status})`);
       }
@@ -97,7 +92,7 @@ export function DocumentList({ documents }: DocumentListProps) {
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = downloadUrl;
       link.download = `${number}.pdf`;
       document.body.appendChild(link);
@@ -105,8 +100,10 @@ export function DocumentList({ documents }: DocumentListProps) {
       link.remove();
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      console.error('❌ Erro ao baixar o arquivo:', error);
-      alert('Não foi possível baixar o PDF. Verifique no console do navegador.');
+      console.error("❌ Erro ao baixar o arquivo:", error);
+      // Define o erro e faz seu desaparecimento após 5 segundos
+      setDownloadError("Não foi possível baixar o PDF.");
+      setTimeout(() => setDownloadError(null), 5000);
     }
   };
 
@@ -194,7 +191,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                     {doc.title}
                   </CardTitle>
                   <span className="text-sm px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-                    {new Date(doc.date).toLocaleDateString('pt-BR')}
+                    {new Date(doc.date).toLocaleDateString("pt-BR")}
                   </span>
                 </div>
                 <CardDescription className="text-base">
@@ -205,7 +202,9 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <p className="text-muted-foreground mb-4">{doc.description}</p>
                 <Button
                   variant="outline"
-                  onClick={() => handleDownload(doc.number.split('/').join('')+'-'+doc.date)}
+                  onClick={() =>
+                    handleDownload((doc.number.split("/").join("")).split('.').join('') + "-" + doc.date)
+                  }
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
                   <Download className="h-4 w-4 text-blue-500 group-hover:text-blue-600" />
@@ -234,6 +233,13 @@ export function DocumentList({ documents }: DocumentListProps) {
           />
         )}
       </div>
+
+      {/* Alerta de erro fixado na parte inferior, exibido por 5s */}
+      {downloadError && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg">
+          {downloadError}
+        </div>
+      )}
     </div>
   );
 }

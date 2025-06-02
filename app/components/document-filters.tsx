@@ -1,33 +1,44 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DocumentType, DateRange } from '../types';
-import { Filter, Search } from 'lucide-react';
-import { format, getYear, getMonth, setYear, setMonth } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DocumentType, DateRange } from "../types";
+import { Filter, Search } from "lucide-react";
+import { getYear } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface DocumentFiltersProps {
-  onFilterChange: (type: DocumentType | 'ALL', dateRange: DateRange) => void;
+  onFilterChange: (type: DocumentType | "ALL", dateRange: DateRange) => void;
   onSearchChange: (term: string) => void;
   searchTerm: string;
 }
 
-export function DocumentFilters({ onFilterChange, onSearchChange, searchTerm }: DocumentFiltersProps) {
-  const [type, setType] = useState<DocumentType | 'ALL'>('ALL');
-  const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined });
+export function DocumentFilters({
+  onFilterChange,
+  onSearchChange,
+  searchTerm,
+}: DocumentFiltersProps) {
+  const [type, setType] = useState<DocumentType | "ALL">("ALL");
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: undefined,
+    to: undefined,
+  });
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 2022 + 1 }, (_, i) => currentYear - i);
-  const months = Array.from({ length: 12 }, (_, i) => ({
-    value: i,
-    label: format(new Date(2024, i, 1), 'MMMM', { locale: ptBR }),
-  }));
+  const years = Array.from(
+    { length: currentYear - 2022 + 1 },
+    (_, i) => currentYear - i
+  );
 
   const handleTypeChange = (value: string) => {
-    const newType = value as DocumentType | 'ALL';
+    const newType = value as DocumentType | "ALL";
     setType(newType);
     onFilterChange(newType, dateRange);
   };
@@ -37,27 +48,22 @@ export function DocumentFilters({ onFilterChange, onSearchChange, searchTerm }: 
     onFilterChange(type, range);
   };
 
-  const handleYearChange = (date: Date | undefined, field: 'from' | 'to') => (year: string) => {
-    if (!date) date = new Date();
-    const newDate = setYear(date, parseInt(year));
+  // Atualiza a data definindo o início do ano ou o fim do ano, conforme o campo.
+  const handleYearChange = (field: "from" | "to") => (year: string) => {
+    const y = parseInt(year, 10);
+    const newDate =
+      field === "from"
+        ? new Date(y, 0, 1) // 1 de janeiro do ano selecionado.
+        : new Date(y, 11, 31, 23, 59, 59); // 31 de dezembro, fim do dia.
     handleDateChange({ ...dateRange, [field]: newDate });
   };
 
-  const handleMonthChange = (date: Date | undefined, field: 'from' | 'to') => (month: string) => {
-    if (!date) date = new Date();
-    const newDate = setMonth(date, parseInt(month));
-    handleDateChange({ ...dateRange, [field]: newDate });
-  };
-
-  // Função que limpa os filtros: pesquisa, tipo e datas.
+  // Função para limpar os filtros.
   const handleClear = () => {
-    // Limpa a pesquisa no componente pai
-    onSearchChange('');
-    // Reseta os filtros locais
-    setType('ALL');
+    onSearchChange("");
+    setType("ALL");
     setDateRange({ from: undefined, to: undefined });
-    // Notifica o componente pai para atualizar os filtros
-    onFilterChange('ALL', { from: undefined, to: undefined });
+    onFilterChange("ALL", { from: undefined, to: undefined });
   };
 
   return (
@@ -101,70 +107,42 @@ export function DocumentFilters({ onFilterChange, onSearchChange, searchTerm }: 
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Data Inicial
             </label>
-            <div className="flex gap-2">
-              <Select 
-                value={dateRange.from ? getYear(dateRange.from).toString() : ''} 
-                onValueChange={handleYearChange(dateRange.from, 'from')}
-              >
-                <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <SelectValue placeholder="Ano" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select 
-                value={dateRange.from ? getMonth(dateRange.from).toString() : ''} 
-                onValueChange={handleMonthChange(dateRange.from, 'from')}
-              >
-                <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <SelectValue placeholder="Mês" />
-                </SelectTrigger>
-                <SelectContent>
-                  {months.map((month) => (
-                    <SelectItem key={month.value} value={month.value.toString()}>{month.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={dateRange.from ? getYear(dateRange.from).toString() : ""}
+              onValueChange={handleYearChange("from")}
+            >
+              <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                <SelectValue placeholder="Ano" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Data Final
             </label>
-            <div className="flex gap-2">
-              <Select 
-                value={dateRange.to ? getYear(dateRange.to).toString() : ''} 
-                onValueChange={handleYearChange(dateRange.to, 'to')}
-              >
-                <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <SelectValue placeholder="Ano" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select 
-                value={dateRange.to ? getMonth(dateRange.to).toString() : ''} 
-                onValueChange={handleMonthChange(dateRange.to, 'to')}
-              >
-                <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <SelectValue placeholder="Mês" />
-                </SelectTrigger>
-                <SelectContent>
-                  {months.map((month) => (
-                    <SelectItem key={month.value} value={month.value.toString()}>{month.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={dateRange.to ? getYear(dateRange.to).toString() : ""}
+              onValueChange={handleYearChange("to")}
+            >
+              <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                <SelectValue placeholder="Ano" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

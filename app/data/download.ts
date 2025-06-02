@@ -8,8 +8,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Filename inválido.' });
   }
 
-  // Monta a URL para acessar o backend NestJS
-  const url = `http://localhost:3001/documento/download/${filename}.pdf`;
+  // Corrigido: Utiliza HTTPS para acessar o backend e evitar erros de conexão insegura.
+  const url = `https://localhost:3001/documento/download/${filename}.pdf`;
 
   try {
     const response = await fetch(url);
