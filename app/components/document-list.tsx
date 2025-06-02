@@ -191,7 +191,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                     {doc.title}
                   </CardTitle>
                   <span className="text-sm px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-                    {new Date(doc.date).toLocaleDateString("pt-BR")}
+                    {new Date(doc.date).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
                   </span>
                 </div>
                 <CardDescription className="text-base">
