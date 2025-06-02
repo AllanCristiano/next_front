@@ -35,6 +35,7 @@ export function DocumentList({ documents }: DocumentListProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const itemsPerPage = 5;
 
+  // Filtra os documentos com base na busca, tipo e data
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch =
       doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,10 +80,17 @@ export function DocumentList({ documents }: DocumentListProps) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Função para baixar o PDF utilizando o endpoint interno (/api/download)
-  const handleDownload = async (number: string) => {
-    // Chama o endpoint interno que realiza o proxy para o backend.
-    const url = `/data/download?filename=${number}`;
+  // Função para baixar o PDF usando o endpoint interno
+  const handleDownload = async (fileIdentifier: string) => {
+    // Se o fileIdentifier já contiver a extensão ".pdf", remova-a
+    const filename = fileIdentifier.toLowerCase().endsWith(".pdf")
+      ? fileIdentifier.slice(0, -4)
+      : fileIdentifier;
+
+    // Monte a URL para chamar o endpoint interno.
+    // Se sua aplicação estiver configurada com um basePath (ex.: "/data"), 
+    // o Next.js já faz o prefixo automaticamente.
+    const url = `/api/download?filename=${filename}`;
 
     console.log("⏬ Tentando baixar PDF via proxy interno:", url);
     try {
@@ -97,7 +105,7 @@ export function DocumentList({ documents }: DocumentListProps) {
 
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `${number}.pdf`;
+      link.download = `${filename}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -205,7 +213,11 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    handleDownload((doc.number.split("/").join("")).split(".").join("") + "-" + doc.date + '.pdf')
+                    handleDownload(
+                      (doc.number.split("/").join("")).split(".").join("") +
+                        "-" +
+                        doc.date
+                    )
                   }
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
@@ -236,7 +248,6 @@ export function DocumentList({ documents }: DocumentListProps) {
         )}
       </div>
 
-      {/* Alerta de erro fixado na parte inferior, exibido por 5 segundos */}
       {downloadError && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg">
           {downloadError}
