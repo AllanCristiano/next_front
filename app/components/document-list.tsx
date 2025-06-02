@@ -63,7 +63,10 @@ export function DocumentList({ documents }: DocumentListProps) {
   };
 
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
-  const paginatedDocuments = filteredDocuments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedDocuments = filteredDocuments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleFilterChange = (type: DocumentType | "ALL", newDateRange: DateRange) => {
     setSelectedType(type);
@@ -76,12 +79,12 @@ export function DocumentList({ documents }: DocumentListProps) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Função para baixar o PDF: chama diretamente o NestJS em localhost:3001
+  // Função para baixar o PDF utilizando o endpoint interno (/api/download)
   const handleDownload = async (number: string) => {
-    // monta a URL completa do Nest
-    const url = `http://177.39.63.52:3001/documento/download/${number}.pdf`;
+    // Chama o endpoint interno que realiza o proxy para o backend.
+    const url = `/data/download?filename=${number}`;
 
-    console.log("⏬ Tentando baixar PDF de:", url);
+    console.log("⏬ Tentando baixar PDF via proxy interno:", url);
     try {
       const response = await fetch(url, { method: "GET" });
       console.log("📥 Status da resposta:", response.status);
@@ -101,7 +104,6 @@ export function DocumentList({ documents }: DocumentListProps) {
       window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error("❌ Erro ao baixar o arquivo:", error);
-      // Define o erro e faz seu desaparecimento após 5 segundos
       setDownloadError("Não foi possível baixar o PDF.");
       setTimeout(() => setDownloadError(null), 5000);
     }
@@ -203,7 +205,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    handleDownload((doc.number.split("/").join("")).split('.').join('') + "-" + doc.date)
+                    handleDownload((doc.number.split("/").join("")).split(".").join("") + "-" + doc.date)
                   }
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
@@ -234,7 +236,7 @@ export function DocumentList({ documents }: DocumentListProps) {
         )}
       </div>
 
-      {/* Alerta de erro fixado na parte inferior, exibido por 5s */}
+      {/* Alerta de erro fixado na parte inferior, exibido por 5 segundos */}
       {downloadError && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg">
           {downloadError}
