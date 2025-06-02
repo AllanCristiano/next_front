@@ -79,7 +79,7 @@ export function DocumentList({ documents }: DocumentListProps) {
   // Função para baixar o PDF: chama diretamente o NestJS em localhost:3001
   const handleDownload = async (number: string) => {
     // monta a URL completa do Nest
-    const url = `http://10.68.10.12:3001/documento/download/${number}.pdf`;
+    const url = `http://177.39.63.52:3001/documento/download/${number}.pdf`;
 
     console.log("⏬ Tentando baixar PDF de:", url);
     try {
