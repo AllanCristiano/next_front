@@ -205,7 +205,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <Button
                   variant="outline"
                   onClick={() =>
-                    handleDownload((doc.number.split("/").join("")).split(".").join("") + "-" + doc.date)
+                    handleDownload((doc.number.split("/").join("")).split(".").join("") + "-" + doc.date + '.pdf')
                   }
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
