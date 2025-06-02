@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Corrigido: Utiliza HTTPS para acessar o backend e evitar erros de conexão insegura.
-  const url = `https://localhost:3001/documento/download/${filename}.pdf`;
+  const url = `https://10.68.10.12:3001/documento/download/${filename}.pdf`;
 
   try {
     const response = await fetch(url);

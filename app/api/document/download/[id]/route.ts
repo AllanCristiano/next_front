@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  const nestUrl = `http://localhost:3001/documento/download/${id}.pdf`;
+  const nestUrl = `http://10.68.10.12:3001/documento/download/${id}.pdf`;
 
   // Chama o NestJS para buscar o PDF
   const nestRes = await fetch(nestUrl);
