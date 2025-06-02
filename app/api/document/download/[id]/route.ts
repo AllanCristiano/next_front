@@ -1,10 +1,10 @@
 // app/api/document/download/[id]/route.ts
 export const dynamic = 'force-dynamic';
 
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
@@ -14,10 +14,12 @@ export async function GET(
   const nestRes = await fetch(nestUrl);
 
   if (!nestRes.ok) {
-    // Se o NestJS retornar erro (por ex. 404 ou 500), devolve um JSON de erro
     const errorText = await nestRes.text();
     return new NextResponse(
-      JSON.stringify({ error: 'Erro ao buscar o PDF no NestJS', detail: errorText }),
+      JSON.stringify({
+        error: 'Erro ao buscar o PDF no NestJS',
+        detail: errorText,
+      }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
@@ -25,7 +27,6 @@ export async function GET(
     );
   }
 
-  // Se vier 200 do NestJS, converte em ArrayBuffer e retorna como PDF
   const buffer = await nestRes.arrayBuffer();
   return new NextResponse(Buffer.from(buffer), {
     status: 200,
