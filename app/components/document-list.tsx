@@ -81,40 +81,8 @@ export function DocumentList({ documents }: DocumentListProps) {
   };
 
   // Função para baixar o PDF usando o endpoint interno
-  const handleDownload = async (fileIdentifier: string) => {
-    // Se o fileIdentifier já contiver a extensão ".pdf", remova-a
-    const filename = fileIdentifier.toLowerCase().endsWith(".pdf")
-      ? fileIdentifier.slice(0, -4)
-      : fileIdentifier;
-
-    // Monte a URL para chamar o endpoint interno.
-    // Se sua aplicação estiver configurada com um basePath (ex.: "/data"), 
-    // o Next.js já faz o prefixo automaticamente.
-    const url = `/api/download?filename=${filename}`;
-
-    console.log("⏬ Tentando baixar PDF via proxy interno:", url);
-    try {
-      const response = await fetch(url, { method: "GET" });
-      console.log("📥 Status da resposta:", response.status);
-      if (!response.ok) {
-        throw new Error(`Erro ao buscar o PDF (status ${response.status})`);
-      }
-
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = `${filename}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(downloadUrl);
-    } catch (error) {
-      console.error("❌ Erro ao baixar o arquivo:", error);
-      setDownloadError("Não foi possível baixar o PDF.");
-      setTimeout(() => setDownloadError(null), 5000);
-    }
+  const handleDownload = (filename: string) => {
+  window.open(`http://localhost:3001/documento/download/${filename}.pdf`, "_blank");
   };
 
   return (
