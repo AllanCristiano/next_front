@@ -52,6 +52,11 @@ export function DocumentList({ documents }: DocumentListProps) {
     return matchesSearch && matchesType && matchesDateRange;
   });
 
+  // Ordena os documentos do mais novo para o mais antigo
+  const sortedDocuments = filteredDocuments.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
   const documentStats = {
     total: documents.length,
     filtered: filteredDocuments.length,
@@ -64,7 +69,7 @@ export function DocumentList({ documents }: DocumentListProps) {
   };
 
   const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
-  const paginatedDocuments = filteredDocuments.slice(
+  const paginatedDocuments = sortedDocuments.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -83,12 +88,11 @@ export function DocumentList({ documents }: DocumentListProps) {
   // Função para baixar o PDF usando o endpoint interno
   const handleDownload = (filename: string) => {
     const url = `/documentos/${filename}.pdf`;
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `${filename}.pdf`;
     link.click();
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
