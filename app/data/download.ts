@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // Defina a URL do backend diretamente aqui (sem usar .env)
-const BACKEND_URL = "https://localhost:3001";
+const BACKEND_URL = "http://localhost:3001";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Permite apenas requisições GET
