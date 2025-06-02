@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const BACKEND_URL = "https://localhost:3001";
+  const BACKEND_URL = "http://localhost:3001";
   const url = `${BACKEND_URL}/documento/download/${filename}.pdf`;
 
   try {
