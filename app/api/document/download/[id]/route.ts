@@ -1,14 +1,14 @@
-// app/api/document/download/[number]/route.ts
+// app/api/document/download/[id]/route.ts
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { number: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { number } = params;
-  const nestUrl = `http://localhost:3001/documento/download/${number}.pdf`;
+  const { id } = params;
+  const nestUrl = `http://localhost:3001/documento/download/${id}.pdf`;
 
   // Chama o NestJS para buscar o PDF
   const nestRes = await fetch(nestUrl);
@@ -31,7 +31,7 @@ export async function GET(
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${number}.pdf"`,
+      'Content-Disposition': `attachment; filename="${id}.pdf"`,
     },
   });
 }
