@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Filename inválido.' }, { status: 400 });
   }
 
+  // Atualize o BACKEND_URL conforme necessário
   const BACKEND_URL = "http://localhost:3001";
   const url = `${BACKEND_URL}/documento/download/${filename}.pdf`;
 
@@ -28,7 +29,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${filename}.pdf"`
+        "Content-Disposition": `attachment; filename="${filename}.pdf"`,
       },
     });
   } catch (error: any) {
