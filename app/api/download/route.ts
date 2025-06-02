@@ -10,8 +10,8 @@ export async function GET(request: Request) {
     });
   }
 
-  const BACKEND_URL = "http://localhost:3001";
-  const url = `${BACKEND_URL}/documento/download/${filename}.pdf`;
+  const BACKEND_URL = process.env.BACKEND_URL!;
+  const url = `http://localhost:3001/documento/download/${filename}.pdf`;
 
   try {
     const response = await fetch(url);
