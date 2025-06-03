@@ -175,11 +175,8 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FileText className="h-5 w-5 text-blue-500" />
-                    {doc.title}
+                    {doc.title + " " + doc.date}
                   </CardTitle>
-                  <span className="text-sm px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-                    {new Date(doc.date).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
-                  </span>
                 </div>
                 <CardDescription className="text-base">
                   Número do documento: {doc.number}
