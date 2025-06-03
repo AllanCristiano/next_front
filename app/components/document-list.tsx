@@ -186,7 +186,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FileText className="h-5 w-5 text-blue-500" />
-                    {doc.title + " " + formatarDataPorExtenso(doc.date)}
+                    {doc.title + " - " + formatarDataPorExtenso(doc.date)}
                   </CardTitle>
                 </div>
                 <CardDescription className="text-base">
