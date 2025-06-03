@@ -94,6 +94,17 @@ export function DocumentList({ documents }: DocumentListProps) {
     link.click();
   };
 
+  function formatarDataPorExtenso(dataStr: string): string {
+    const data = new Date(dataStr);
+    const opcoes: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    };
+
+    return new Intl.DateTimeFormat('pt-BR', opcoes).format(data).toUpperCase();
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto p-6">
@@ -175,7 +186,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FileText className="h-5 w-5 text-blue-500" />
-                    {doc.title + " " + doc.date}
+                    {doc.title + " " + formatarDataPorExtenso(doc.date)}
                   </CardTitle>
                 </div>
                 <CardDescription className="text-base">
