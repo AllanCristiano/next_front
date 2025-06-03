@@ -95,7 +95,9 @@ export function DocumentList({ documents }: DocumentListProps) {
   };
 
   function formatarDataPorExtenso(dataStr: string): string {
-    const data = new Date(dataStr);
+    const [ano, mes, dia] = dataStr.split('-').map(Number);
+    const data = new Date(ano, mes - 1, dia); // Mês começa do 0 em JavaScript
+
     const opcoes: Intl.DateTimeFormatOptions = {
         day: '2-digit',
         month: 'long',
@@ -186,7 +188,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FileText className="h-5 w-5 text-blue-500" />
-                    {doc.title + " - " + formatarDataPorExtenso(doc.date)}
+                    {doc.title + " - " + formatarDataPorExtenso(doc.date).toLowerCase()}
                   </CardTitle>
                 </div>
                 <CardDescription className="text-base">
