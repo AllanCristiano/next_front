@@ -41,6 +41,15 @@ export function DocumentFilters({
     onFilterChange(type, range);
   };
 
+  const removeDiacritics = (text: string) => {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '');
+  };
+
+  const handleSearchChange = (term: string) => {
+    const normalizedTerm = removeDiacritics(term);
+    onSearchChange(normalizedTerm);
+  };
+
   // Função para limpar os filtros.
   const handleClear = () => {
     onSearchChange("");
@@ -62,7 +71,7 @@ export function DocumentFilters({
           <Input
             placeholder="Pesquisar por título, descrição ou número..."
             value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
           />
         </div>
