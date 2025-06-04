@@ -104,7 +104,7 @@ export function DocumentList({ documents }: DocumentListProps) {
         year: 'numeric'
     };
 
-    return new Intl.DateTimeFormat('pt-BR', opcoes).format(data).toUpperCase();
+    return new Intl.DateTimeFormat('pt-BR', opcoes).format(data).toLowerCase();
   }
 
   return (
@@ -188,7 +188,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FileText className="h-5 w-5 text-blue-500" />
-                    {doc.title + " - " + formatarDataPorExtenso(doc.date).toLowerCase()}
+                    {doc.title + " de " + formatarDataPorExtenso(doc.date)}
                   </CardTitle>
                 </div>
                 <CardDescription className="text-base">
