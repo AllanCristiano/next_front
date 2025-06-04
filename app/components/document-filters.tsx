@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { DocumentType, DateRange } from "../types";
 import { Filter, Search } from "lucide-react";
-import { getYear } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -31,12 +30,6 @@ export function DocumentFilters({
     to: undefined,
   });
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from(
-    { length: currentYear - 2022 + 1 },
-    (_, i) => currentYear - i
-  );
-
   const handleTypeChange = (value: string) => {
     const newType = value as DocumentType | "ALL";
     setType(newType);
@@ -46,16 +39,6 @@ export function DocumentFilters({
   const handleDateChange = (range: DateRange) => {
     setDateRange(range);
     onFilterChange(type, range);
-  };
-
-  // Atualiza a data definindo o início do ano ou o fim do ano, conforme o campo.
-  const handleYearChange = (field: "from" | "to") => (year: string) => {
-    const y = parseInt(year, 10);
-    const newDate =
-      field === "from"
-        ? new Date(y, 0, 1) // 1 de janeiro do ano selecionado.
-        : new Date(y, 11, 31, 23, 59, 59); // 31 de dezembro, fim do dia.
-    handleDateChange({ ...dateRange, [field]: newDate });
   };
 
   // Função para limpar os filtros.
@@ -107,42 +90,34 @@ export function DocumentFilters({
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Data Inicial
             </label>
-            <Select
-              value={dateRange.from ? getYear(dateRange.from).toString() : ""}
-              onValueChange={handleYearChange("from")}
-            >
-              <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <SelectValue placeholder="Ano" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input
+              type="date"
+              value={dateRange.from ? dateRange.from.toISOString().split("T")[0] : ""}
+              onChange={(e) =>
+                handleDateChange({
+                  ...dateRange,
+                  from: e.target.value ? new Date(e.target.value) : undefined,
+                })
+              }
+              className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Data Final
             </label>
-            <Select
-              value={dateRange.to ? getYear(dateRange.to).toString() : ""}
-              onValueChange={handleYearChange("to")}
-            >
-              <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <SelectValue placeholder="Ano" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input
+              type="date"
+              value={dateRange.to ? dateRange.to.toISOString().split("T")[0] : ""}
+              onChange={(e) =>
+                handleDateChange({
+                  ...dateRange,
+                  to: e.target.value ? new Date(e.target.value) : undefined,
+                })
+              }
+              className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            />
           </div>
         </div>
 
