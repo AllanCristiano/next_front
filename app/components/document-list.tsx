@@ -107,6 +107,12 @@ export function DocumentList({ documents }: DocumentListProps) {
     return new Intl.DateTimeFormat('pt-BR', opcoes).format(data).toLowerCase();
   }
 
+  function toTitleCase(str: string): string {
+    return str.replace(/\w\S*/g, (txt) => 
+        txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto p-6">
@@ -188,7 +194,7 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FileText className="h-5 w-5 text-blue-500" />
-                    {doc.title + " de " + formatarDataPorExtenso(doc.date)}
+                    {toTitleCase(doc.title) + " de " + formatarDataPorExtenso(doc.date)}
                   </CardTitle>
                 </div>
                 <CardDescription className="text-base">
