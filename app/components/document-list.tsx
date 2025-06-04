@@ -35,15 +35,12 @@ export function DocumentList({ documents }: DocumentListProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const itemsPerPage = 5;
 
-  // Função para normalizar números removendo pontos
-  const normalizeNumber = (num: string) => num.replace(/\./g, "");
-
   // Filtra os documentos com base na busca, tipo e data
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch =
       doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      normalizeNumber(doc.number).includes(normalizeNumber(searchTerm));
+      doc.number.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesType = selectedType === "ALL" || doc.type === selectedType;
 
@@ -128,6 +125,59 @@ export function DocumentList({ documents }: DocumentListProps) {
           </p>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <CardHeader className="p-6">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-medium">Total de Documentos</CardTitle>
+                <Files className="h-6 w-6 opacity-80" />
+              </div>
+              <p className="text-3xl font-bold mt-2">{documentStats.total}</p>
+            </CardHeader>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
+            <CardHeader className="p-6">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-medium">Documentos Filtrados</CardTitle>
+                <Filter className="h-6 w-6 opacity-80" />
+              </div>
+              <p className="text-3xl font-bold mt-2">{documentStats.filtered}</p>
+            </CardHeader>
+          </Card>
+
+          <Card className="md:col-span-2 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+            <CardHeader className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <CardTitle className="text-lg font-medium">Distribuição por Tipo</CardTitle>
+                <FileBarChart2 className="h-6 w-6 opacity-80" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span>Portarias</span>
+                    <span className="font-bold">{documentStats.byType.ORDINANCE}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Leis Ordinárias</span>
+                    <span className="font-bold">{documentStats.byType.ORDINARY_LAW}</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span>Leis Complementares</span>
+                    <span className="font-bold">{documentStats.byType.COMPLEMENTARY_LAW}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Decretos</span>
+                    <span className="font-bold">{documentStats.byType.DECREE}</span>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </div>
+
         <DocumentFilters
           onFilterChange={handleFilterChange}
           onSearchChange={setSearchTerm}
@@ -136,11 +186,17 @@ export function DocumentList({ documents }: DocumentListProps) {
 
         <div className="space-y-4">
           {paginatedDocuments.map((doc) => (
-            <Card key={doc.id} className="bg-white dark:bg-gray-900 backdrop-blur-sm bg-opacity-90">
+            <Card
+              key={doc.id}
+              className="transform transition-all duration-200 hover:scale-[1.01] hover:shadow-xl bg-white dark:bg-gray-900 backdrop-blur-sm bg-opacity-90"
+            >
               <CardHeader>
-                <CardTitle className="text-xl">
-                  {toTitleCase(doc.title).split("Nº").join("nº") + " de " + formatarDataPorExtenso(doc.date)}
-                </CardTitle>
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <FileText className="h-5 w-5 text-blue-500" />
+                    {toTitleCase(doc.title).split("Nº").join("nº") + " de " + formatarDataPorExtenso(doc.date)}
+                  </CardTitle>
+                </div>
                 <CardDescription className="text-base">
                   Número do documento: {doc.number}
                 </CardDescription>
@@ -149,7 +205,13 @@ export function DocumentList({ documents }: DocumentListProps) {
                 <p className="text-muted-foreground mb-4">{doc.description}</p>
                 <Button
                   variant="outline"
-                  onClick={() => handleDownload(normalizeNumber(doc.number) + "-" + doc.date)}
+                  onClick={() =>
+                    handleDownload(
+                      (doc.number.split("/").join("")).split(".").join("") +
+                        "-" +
+                        doc.date
+                    )
+                  }
                   className="group hover:bg-blue-50 dark:hover:bg-blue-900"
                 >
                   <Download className="h-4 w-4 text-blue-500 group-hover:text-blue-600" />
