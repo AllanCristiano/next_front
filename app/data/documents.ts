@@ -6,5 +6,9 @@ export async function fetchDocuments(): Promise<Document[]> {
     throw new Error('Erro ao buscar documentos');
   }
   const data: Document[] = await response.json();
-  return data;
+
+  // Filtra removendo o documento com o number "5.660"
+  const filteredData = data.filter(document => document.number !== '5.660');
+
+  return filteredData;
 }
